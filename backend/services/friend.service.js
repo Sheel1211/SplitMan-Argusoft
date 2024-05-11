@@ -11,6 +11,10 @@ import {
   FriendRequestExistsDb,
   ApproveFriendRequestDb,
   PendingFriendRequestDb,
+  DeleteFriendRequestDb,
+  DeleteConversationsDb,
+  DeclineFriendRequestDb,
+  getDeclinedRequestsDb
 } from "../db/friend.db.js";
 
 class FriendService {
@@ -95,6 +99,15 @@ class FriendService {
     }
   };
 
+  static DeleteConversation = async (data) => {
+    try {
+      return await DeleteConversationsDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+
   static FriendRequestExists = async (data) => {
     try {
       return await FriendRequestExistsDb(data);
@@ -106,6 +119,30 @@ class FriendService {
   static ApproveFriendRequest = async (data) => {
     try {
       return await ApproveFriendRequestDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static DeclineFriendRequest = async (data) => {
+    try {
+      return await DeclineFriendRequestDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static getDeclinedRequests = async (data) => {
+    try {
+      return await getDeclinedRequestsDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static DeleteFriendRequest = async (data) => {
+    try {
+      return await DeleteFriendRequestDb(data);
     } catch (error) {
       console.log(error);
       throw new ErrorHandler("Error While Database Operation", 401);

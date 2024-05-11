@@ -1,98 +1,166 @@
 <template>
-  <div class="chatList" v-if="selectedChat">
-    <!-- top bar in personal chat -->
-    <div class="chatEntry">
-      <!-- <div class="chatEntry"> -->
-      <div class="contactDetails">
-        <div class="frameParent">
-          <!-- image and icon -->
-          <div class="WalletParent">
-            <img
-              class="NeedAWallet"
-              loading="lazy"
-              alt=""
-              :src="selectedChat.friend_photo"
-            />
-            <div class="frameWrapper">
-              <!-- <h1 class="anil">Anil</h1>         -->
-              <h1 class="anil">{{ selectedChat.friend_name }}</h1>
+  <!-- <div class="chatList" v-if="selectedChat" style="border-radius: 15px;">
+    top bar in personal chat -->
+
+  <section
+    class="gradient-custom"
+    v-if="selectedChat"
+    style="border-radius: 15px; box-shadow: 0 5px 10px rgba(0, 191, 235, 0.5)"
+  >
+    <div class="WalletParent">
+      <img
+        style="margin: 10px 10px 0px 10px"
+        class="NeedAWallet"
+        loading="lazy"
+        alt=""
+        :src="selectedChat.friend_photo"
+      />
+
+      <span style="margin-top: 15px; font-size: larger">{{
+        selectedChat.friend_name
+      }}</span>
+    </div>
+    <hr />
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-12 col-lg-12 col-xl-12">
+          <ul
+            class="list-unstyled text-white" ref="messagesContainer"
+            style="height: 49vh; overflow-y: auto; padding: 10px"
+          >
+            <div v-for="message in messages" :key="message.m_id">
+              <li class="d-flex justify-content-start mb-4 " v-if="message.s_id != user_id" >
+              <img
+                :src="selectedChat.friend_photo"
+                alt="avatar"
+                class="rounded-circle d-inline-flex align-self-end me-3 shadow-1-strong"
+                width="60"
+              />
+              <div
+                class="card"
+                style="
+                  background: rgba(24, 24, 16, 0.2);
+                  border-radius: 2em;
+                  backdrop-filter: blur(15px);
+                  border: 2px solid rgba(255, 255, 255, 0.05);
+                  background-clip: padding-box;
+                  box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+                "
+              >
+                <div
+                  class="card-header d-flex justify-content-start p-3"
+                  style="
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                    background: transparent;
+                  "
+                >
+                  <p class="fw-bold mb-0">{{selectedChat.friend_name}}</p>
+                  <!-- <p class="text-light small mb-0"><i class="far fa-clock"></i> 12 mins ago</p> -->
+                </div>
+                <div class="card-body">
+                  <p class="mb-0">{{message.message}}</p>
+                </div>
+              </div>
+            </li>
+
+            <li v-else class="d-flex justify-content-end mb-4">
+              <div
+                class="card w"
+                style="
+                  background: rgba(24, 24, 16, 0.2);
+                  border-radius: 2em;
+                  backdrop-filter: blur(15px);
+                  border: 2px solid rgba(255, 255, 255, 0.05);
+                  background-clip: padding-box;
+                  box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+                "
+              >
+                <div
+                  class="card-header d-inline-flex justify-content-end p-3"
+                  style="
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                    background: transparent;
+                  "
+                >
+                  <p class="fw-bold mb-0">You</p>
+                  <!-- <p class="text-light small mb-0"><i class="far fa-clock"></i> 13 mins ago</p> -->
+                </div>
+                <div class="card-body d-inline-flex justify-content-end">
+                  <p class=" justify-content-end mb-0">{{message.message}}</p>
+                </div>
+              </div>
+              <img
+                :src="user_image"
+                alt="avatar"
+                class="rounded-circle d-inline-flex align-self-end ms-3 shadow-1-strong"
+                width="60"
+              />
+            </li>
             </div>
-          </div>
-          <div class="moreOptions">
-            <!-- <img loading="lazy" alt="" src="/Friends/bithreedotsvertical.svg" /> -->
-            <v-menu>
-    <template v-slot:activator="{ props }">
-      <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
-    
-    </template>
-   
-
-    <v-list>
-      <v-list-item v-for="(item, i) in items" :key="i">
-        <v-list-item-title>{{ item.title }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
-          </div>
-          
+            
+        
+          </ul>
+          <ul class="list-unstyled text-white">
+            <li class="mb-3">
+              <div data-mdb-input-init class="form-outline form-white">
+                <textarea
+                  class="form-control"
+                  id="textAreaExample3"
+                  v-model="message"
+                  placeholder="Type your message here..."
+                  rows="4"
+                  style="display: inline-flex; width: 90%"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="sendMessage"
+                  data-mdb-button-init
+                  data-mdb-ripple-init
+                  class="btn btn-light btn-lg btn-rounded float-end"
+                  style="color: black; margin: 30px 0px"
+                >
+                  Send
+                </button>
+              </div>
+            </li>
+          </ul>
         </div>
-        <hr />
       </div>
     </div>
+  </section>
 
-    <!-- chat section -->
-    <div class="chat-container">
-      <!-- <div class="message-container"> 
-      <div class="message sender-message"> 
-        Hello there!
-        </div>
-        <div class="message receiver-message">
-          Hi How are you doing? 
-      </div>
-      <div class="message sender-message">
-          I am fine How are you?
-      </div>
-    </div> -->
-    <div class="message-container">
-      <div
-        v-for="(content, index) in messages"
-        :key="index"
-        :class="[
-          'message',
-          content.s_id === content.c_id  ? 'sender-message' : 'receiver-message',
-        ]"
-      >
-        {{ content.message }}
-      </div>
-    </div>
-    </div>
+  <section
+    class="gradient-custom chatbox"
+    v-else
+    style="border-radius: 15px; box-shadow: 0 5px 10px rgba(0, 191, 235, 0.5)"
+  >
+    <img src="robot.gif" alt="robot" />
+    <h1>
+      Welcome, <span>{{ user_name }}!</span>
+    </h1>
+    <h3>Please select a chat to start messaging</h3>
+  </section>
 
-    <!-- input contaienr -->
-    <div class="message placeholder">
-      <input type="text" placeholder="Type your message..." />
-      <!-- <textarea
-      class="inputTextArea"
-      placeholder="Type your message here..."
-    ></textarea> -->
-      <button>Send</button>
-    </div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
+import { io } from 'socket.io-client';
 import { defineComponent } from "vue";
+import axios from "axios";
 
 export default defineComponent({
   name: "ChatBox",
   data() {
-
     return {
-      messages: [],
-      items: [
-        { title: 'View Expense' },
-        { title: 'Add Expense' },
-      ],
-    };
+      user_image: JSON.parse(localStorage.getItem("user-info")).image,
+      user_name: JSON.parse(localStorage.getItem("user-info")).name,
+      user_id: JSON.parse(localStorage.getItem("user-info")).id, 
 
+      messages: [],
+      message: "",
+      socket: null,
+      error: null,
+    };
   },
   props: {
     selectedChat: {
@@ -102,33 +170,135 @@ export default defineComponent({
     currentUserID: {
       type: Number,
       required: true,
-    }
+    },
   },
-  // mounted() {
-  //   console.log("selectedChat:", this.selectedChat);
-  // }
-
   mounted() {
-    this.loadMessages();
+    if(this.selectedChat){
+      this.loadMessages()
+    }
+    console.log('User Conneceui')
+    this.socket = io('http://localhost:3000'); 
+
+    this.socket.on('connect_error', (err) => {
+      console.error('Connection error:', err);
+      this.error = 'Failed to connect to server.';
+    });
+
+    this.socket.emit("add-user", this.user_id)
+
+    this.socket.on('msg-receive', (msg) => {
+      this.messages.push({ message: msg , time: new Date().toLocaleTimeString()}); 
+      this.$nextTick(() => {
+          this.scrollToBottom();
+        });
+    });
+  },
+
+  watch: {
+    selectedChat() {
+      this.loadMessages();
+      this.scrollToBottom()
+    },
   },
   methods: {
-    async loadMessages() {
-      try {
-        const response = await fetch("/data/data.JSON");
-        // console.log("Response:", response);
-        const data = await response.json();
-        this.messages = data;
-        // console.log("Data:", data);
-      } catch (error) {
-        console.error("Error loading messages:", error);
+    scrollToBottom() {
+      const messagesContainer = this.$refs.messagesContainer;
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }
     },
- 
+    
+    async sendMessage() {
+      // Replace this with your logic to handle the message, e.g., sending it to a server
+      if (this.message.length > 0) {
+        await axios
+          .post("http://localhost:3000/api/messages/addmessage", {
+            sender_id: JSON.parse(localStorage.getItem("user-info")).id,
+            chat_id: this.selectedChat.c_id,
+            message: this.message,
+          })
+          .then((response) => {
+            // Group created successfully
+            this.$emit("Message Sent", response.data);
+            this.closeDialog();
+          })
+          .catch((error) => {
+            console.error("Error sending message:", error);
+          });
+        
+        // Clear the message after sending
+
+        this.socket.emit("send-msg", {
+          to: this.selectedChat.id,
+          from: this.user_id,
+          message: this.message,
+        })
+
+        this.messages.push({
+          s_id: this.user_id,
+          message: this.message,
+        });
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
+
+        console.log(this.messages)
+
+        this.message = "";
+
+      }
+
+    },
+    async loadMessages() {
+      await axios
+        .get(
+          `http://localhost:3000/api/messages/getAllMessages/${this.selectedChat.c_id}`
+        )
+        .then((response) => {
+          // console.log(response.data);
+          this.messages = response.data.result;
+          console.log("messages:", this.messages);
+        })
+        .catch((error) => {
+          console.error("Error loading Messages:", error);
+        });
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
+        
+    },
   },
 });
 </script>
 <style>
-/* main container */
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #fccb90;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(
+    to bottom right,
+    rgba(252, 203, 144, 1),
+    rgba(213, 126, 235, 1)
+  );
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(
+    to bottom right,
+    rgba(252, 203, 144, 1),
+    rgba(213, 126, 235, 1)
+  );
+}
+
+.mask-custom {
+  background: rgba(24, 24, 16, 0.2);
+  border-radius: 2em;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  background-clip: padding-box;
+  box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+}
+
 .chatList {
   background-color: aquamarine;
   justify-content: flex-start;
@@ -141,7 +311,7 @@ export default defineComponent({
   /* height:auto; */
   padding: var(--padding-10xl) var(--padding-4xl) var(--padding-11xl)
     var(--padding-15xl);
-  height: 744px;
+  height: 635px;
 }
 /* profile and top  bar */
 .chatEntry {
@@ -156,12 +326,33 @@ export default defineComponent({
   margin: 0%;
   /* background-color: aqua; */
 }
+
+.w {
+  width: auto !important;
+}
+
 .contactDetails {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--gap-xl-5);
   max-width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  background-color: #080420;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #9186f3;
+  border-radius: 10px;
 }
 
 .frameParent {
@@ -181,6 +372,7 @@ export default defineComponent({
   justify-content: flex-start;
   gap: var(--gap-6xl);
   max-width: 100%;
+  align-items: center;
 }
 /* .bithreeDotsVerticalIcon {
     width: 40px;
@@ -233,65 +425,18 @@ export default defineComponent({
   padding: 0px 0px var(--padding-mid);
 }
 
-/* chat window */
-.chat-container {
-  max-width: 1890px;
-  margin: 50px 1px;
-  background-color: #fff;
-  overflow: hidden;
-  /* width: calc(100% - var(--padding-7xs) * 2); */
-}
-
-.message-container {
+.chatbox {
+  height: 81vh;
   display: flex;
-  flex-direction: column;
-}
-
-.message {
-  flex: 1;
-  border-radius: var(--br-6xl);
-  display: flex;
-  word-wrap: break-word;
+  justify-content: center;
   align-items: center;
-  padding: var(--padding-sm) var(--padding-9xl);
-  margin: 10px;
-  max-width: 70%;
-}
-
-.sender-message {
-  background-color: var(--color-gainsboro);
-  align-self: flex-start;
-}
-.receiver-message {
-  background-color: var(--color-blue);
-  color: #fff;
-  align-self: flex-end;
-}
-
-/* input container */
-.placeholder {
-  max-width: 1890px;
-  align-items: flex-end;
-}
-.message input {
-  width: calc(100% - 9px);
-  /* padding: 8px;  */
-  margin: 3px;
-  border: 1px solid #ddd;
-  border-radius: var(--br-6xl);
-  background-color: var(--color-aliceblue);
-  padding: var(--padding-lgi) var(--padding-4xl) var(--padding-mid)
-    var(--padding-3xl);
-  box-sizing: border-box;
-}
-
-.message button {
-  padding: 12px;
-  margin: 10px;
-  background-color: var(--color-blue);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  flex-direction: column;
+  color: rgb(8, 8, 8);
+  img {
+    height: 20rem;
+  }
+  span {
+    color: #4e0eff;
+  }
 }
 </style>

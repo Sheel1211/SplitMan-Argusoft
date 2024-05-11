@@ -7,6 +7,9 @@ import {
   getMyAllCoversations,
   pendingFriendRequest,
   startNewConversation,
+  deleteFriendRequest,
+  declineFriendRequest,
+  getDeclinedRequests
 } from "../controllers/friend.controller.js";
 
 const friendRouter = express.Router();
@@ -18,6 +21,9 @@ friendRouter.post("/startConversation", startNewConversation);
 friendRouter.get("/getMyAllConversations/:uid", getMyAllCoversations);
 
 friendRouter.post("/approveFriend", approveFriend);
+friendRouter.post("/deleteFriendRequest", deleteFriendRequest);
+friendRouter.post("/declineFriendRequest", declineFriendRequest);
 friendRouter.get("/pendingFriendRequest/:id", pendingFriendRequest);
+friendRouter.get("/getDeclinedRequests/:id", getDeclinedRequests);
 
 export default friendRouter;

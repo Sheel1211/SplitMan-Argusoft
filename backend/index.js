@@ -11,6 +11,7 @@ import swaggerUiExpress from "swagger-ui-express";
 import friendRouter from "./routes/friend.route.js";
 import groupRouter from "./routes/group.route.js";
 import expenseRouter from "./routes/expense.route.js";
+import chatRouter from "./routes/chat.route.js";
 
 env.config();
 
@@ -26,6 +27,7 @@ app.use("/api/user", userRouter);
 app.use("/api/friends", friendRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/expenses", expenseRouter);
+app.use("/api/messages", chatRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

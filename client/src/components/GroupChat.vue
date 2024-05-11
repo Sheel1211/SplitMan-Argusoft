@@ -168,7 +168,7 @@ export default {
       newMessage: "",
       drawer: false,
       search: "",
-      username: "Deepanshu Dixit",
+      username: "",
       participants: [],
       groups: [],
       windowWidth: window.innerWidth,
@@ -191,6 +191,8 @@ export default {
     // Fetch group information from backend API
     //   this.fetchGroups();
     //   this.fetchParticipants();
+
+    this.username = this.userDetails.name;
 
     // Keep nav bar open on mounting for larger screens
     if (this.windowWidth > 960) {
@@ -260,7 +262,7 @@ export default {
         console.log(this.newMessage);
         await axios.post(`http://localhost:3000/api/groups/addMessageGroup`, {
           group_id: this.group_id,
-          sender_id: 1,
+          sender_id: this.userDetails.id,
           message: this.newMessage,
         });
         this.newMessage = "";

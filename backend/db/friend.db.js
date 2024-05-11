@@ -102,10 +102,9 @@ export const getAllConversationsDb = async ({ user_id }) => {
   ON 
     (c.member1_id = f.member1_id AND c.member2_id = f.member2_id) OR (c.member2_id = f.member1_id AND c.member1_id = f.member2_id)  
   WHERE 
-    (c.member1_id = $1 OR c.member2_id = $1)`,
+    (c.member1_id = $1 OR c.member2_id = $1) AND f.is_declined = false`,
     [user_id]
   );
-
   return result;
 };
 export const FriendRequestExistsDb = async (friend_id) => {
@@ -119,12 +118,49 @@ export const FriendRequestExistsDb = async (friend_id) => {
 export const ApproveFriendRequestDb = async ({user_id, friend_id}) => {
   console.log(user_id, friend_id)
   const { rows: result } = await pool.query(
-    "UPDATE friends SET status = $1 WHERE member1_id = $2 and member2_id = $3",
+    "UPDATE friends SET status = $1, date = NOW() WHERE member2_id = $2 and member1_id = $3",
     [1, user_id, friend_id]
   );
 
   return result;
 };
+
+export const getDeclinedRequestsDb = async (user_id) => {
+  const { rows: result } = await pool.query(
+    "select u.username from friends f join users u on f.member2_id = u.id where f.member1_id = $1 AND is_declined=true",
+    [user_id]
+  );
+
+  return result;
+};
+
+export const DeclineFriendRequestDb = async ({user_id, friend_id}) => {
+  console.log(user_id, friend_id)
+  const { rows: result } = await pool.query(
+    "UPDATE friends SET is_declined = true WHERE member2_id = $1 and member1_id = $2 order by date desc",
+    [user_id, friend_id]
+  );
+
+  return result;
+};
+export const DeleteFriendRequestDb = async ({user_id, friend_id}) => {
+  const { rows: result } = await pool.query(
+    "Delete from friends where member1_id = $1 AND member2_id = $2",
+    [user_id, friend_id]
+  );
+
+  return result;
+};
+
+export const DeleteConversationsDb = async ({user_id, friend_id}) => {
+  const { rows: result } = await pool.query(
+    "Delete from friends_conversations where member1_id = $1 AND member2_id = $2",
+    [user_id, friend_id]
+  );
+
+  return result;
+};
+
 export const PendingFriendRequestDb = async (user_id) => {
   const { rows: result } = await pool.query(
     "SELECT * FROM friends WHERE member1_id = $1 OR member1_id = $1 AND status = $2",

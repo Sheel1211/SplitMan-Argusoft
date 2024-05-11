@@ -93,7 +93,6 @@ export const getMyAllCoversations = async (req, res, next) => {
     const result = await FriendService.getAllMyConversations({
       user_id: user_id,
     });
-
     res.status(201).json(result);
   } catch (error) {
     console.error("Error starting conversation:", error);
@@ -101,12 +100,46 @@ export const getMyAllCoversations = async (req, res, next) => {
   }
 };
 
-export const approveFriend = async (req, res, next) => {
+export const deleteFriendRequest = async (req, res, next) => {
   try {
     const {user_id, friend_id} = req.body;
 
     const FriendRequestExists = await FriendService.FriendRequestExists(
       friend_id
+    );
+
+    if (FriendRequestExists.length == 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Friend request doesn't exist`,
+      });
+    }
+
+    const deleteFriendRequest = await FriendService.DeleteFriendRequest(
+      req.body
+    );
+    
+    const deleteConversation = await FriendService.DeleteConversation(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: `Friend Request Deleted successfully!`,
+      result: deleteFriendRequest,
+    });
+
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const approveFriend = async (req, res, next) => {
+  try {
+    const {user_id, friend_id} = req.body;
+
+    const FriendRequestExists = await pool.query(
+      "SELECT * FROM friends WHERE member1_id = $1",
+      [friend_id]
     );
 
     if (FriendRequestExists.length == 0) {
@@ -129,6 +162,53 @@ export const approveFriend = async (req, res, next) => {
     next(error);
   }
 };
+
+export const declineFriendRequest = async (req, res, next) => {
+  try {
+    const {user_id, friend_id} = req.body;
+
+    const FriendRequestExists = await pool.query(
+      "SELECT * FROM friends WHERE member1_id = $1",
+      [friend_id]
+    );
+
+    if (FriendRequestExists.length == 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Friend request doesn't exist`,
+      });
+    }
+
+    const declineFriendRequest = await FriendService.DeclineFriendRequest(
+      req.body
+    );
+
+    res.status(201).json({
+      success: true,
+      message: `Friend Request Declined successfully!`,
+      result: declineFriendRequest,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDeclinedRequests = async (req, res, next) => {
+  try {
+    const user_id = req.params.id;
+
+    const DeclinedFriends = await FriendService.getDeclinedRequests(user_id);
+    
+    res.status(201).json({
+      success: true,
+      message: `Declined Friend Requests Fetched Successfully!`,
+      result: DeclinedFriends,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const pendingFriendRequest = async (req, res, next) => {
   try {
     const user_id = req.params.id;
@@ -150,3 +230,4 @@ export const pendingFriendRequest = async (req, res, next) => {
     next(error);
   }
 };
+
