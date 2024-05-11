@@ -16,26 +16,28 @@
       <v-container fluid>
         <v-row justify="justified">
           <v-col cols="12" sm="8" md="6" lg="4">
-            <v-card class="chat-box mx-auto my-8" elevation="16" max-width="1000">
+            <v-card
+              class="chat-box mx-auto my-8"
+              elevation="16"
+              max-width="1000"
+            >
               <!-- Group name and menu bar -->
 
               <v-toolbar color="blue" class="d-flex justify-space-between">
                 <v-avatar class="profile-avatar">
-                  <img
-                    :src="groupDetails.group_icon"
-                    alt="Profile Image"
-                  />
+                  <img :src="groupDetails.group_icon" alt="Profile Image" />
                 </v-avatar>
 
-                <v-toolbar-title class="text-h6">{{ groupDetails.group_name }}</v-toolbar-title>
+                <v-toolbar-title class="text-h6">{{
+                  groupDetails.group_name
+                }}</v-toolbar-title>
 
                 <!-- <v-btn variant="outlined" class="menu-buttons"  @click="addExpense">Add Expense</v-btn> -->
                 <!-- <v-btn variant="outlined" class="menu-buttons" @click="openAddExpenseDialog">Add Expense</v-btn> -->
                 <AddExpenseForm
-                :group_id="group_id"
-                @successToast="successToast(`Expense Created Successfully!`)"
-                /> 
-
+                  :group_id="group_id"
+                  @successToast="successToast(`Expense Created Successfully!`)"
+                />
 
                 <!-- <template  v-slot:append>
                           <v-btn icon="mdi-dots-vertical"></v-btn>    
@@ -54,17 +56,36 @@
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item> -->
+                    <v-list-item v-if="loggedUserData.role <= 2">
+                      <EditGroup
+                        :group_id="group_id"
+                        @successToast="
+                          successToast(`Group Updated Successfully!!`)
+                        "
+                      />
+                    </v-list-item>
                     <v-list-item>
-                      <!-- <v-list-item-content>Details</v-list-item-content> -->
+                      <ViewExpense :group_id="group_id"/>
+                    </v-list-item>
+                    <v-list-item>
                       <GroupDetails :group_id="group_id" />
                     </v-list-item>
                     <v-list-item>
-                      <AddMembers :group_id="group_id"/>
+                      <GroupBalanceDetails :group_id="group_id" />
                     </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>Exit Group</v-list-item-content>
+                    <v-list-item v-if="loggedUserData.role <= 2">
+                      <AddMembers :group_id="group_id" />
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item class="cursor-pointer d-flex align-center justify-center font-weight-medium">
+                      <v-list-item-content @click="exitGroup()"
+                        >Exit Group</v-list-item-content
+                      >
+                    </v-list-item>
+                    <v-list-item
+                    class="cursor-pointer d-flex align-center justify-center font-weight-medium"
+                      v-if="groupDetails.creator_id == userDetails.id"
+                      @click="deleteGroup()"
+                    >
                       <v-list-item-content>Delete Group</v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -75,7 +96,9 @@
               <v-card-text class="messages d-flex flex-column">
                 <div v-for="(message, index) in messages" :key="index">
                   <div class="message d-flex align-center">
-                    <div class="username text-subtitle-1 font-weight-bold">{{ message.sender }}</div>
+                    <div class="username text-subtitle-1 font-weight-bold">
+                      {{ message.sender }}
+                    </div>
                     <v-chip
                       class="message text-body-1"
                       :class="{
@@ -113,10 +136,13 @@
 import NavBar from "./NavBar.vue";
 import AppBar from "./AppBar.vue";
 import AddMembers from "./AddMembers.vue";
-import GroupDetails from "./GroupDetails.vue"
+import GroupBalanceDetails from "./GroupBalanceDetails.vue";
+import EditGroup from "./EditGroup.vue";
+import GroupDetails from "./GroupDetails.vue";
+import ViewExpense from "./ViewExpense.vue";
 import { useRouter } from "vue-router";
-import axios from 'axios';
-import AddExpenseForm from './AddExpenseForm.vue';
+import axios from "axios";
+import AddExpenseForm from "./AddExpenseForm.vue";
 import { toast } from "vue3-toastify";
 import "../../node_modules/vue3-toastify/dist/index.css";
 
@@ -126,14 +152,17 @@ export default {
     NavBar,
     AppBar,
     AddMembers,
+    GroupBalanceDetails,
+    AddExpenseForm,
+    EditGroup,
     GroupDetails,
-    AddExpenseForm
+    ViewExpense,
   },
   data() {
     return {
       groupName: "GroupName",
-      group_id: '',
-      groupDetails: '',
+      group_id: "",
+      groupDetails: "",
       router: useRouter(),
       messages: [],
       newMessage: "",
@@ -143,6 +172,8 @@ export default {
       participants: [],
       groups: [],
       windowWidth: window.innerWidth,
+      userDetails: JSON.parse(localStorage.getItem("user-info")),
+      loggedUserData: "",
     };
   },
   computed: {
@@ -166,16 +197,21 @@ export default {
       this.drawer = true;
     }
 
-    const id = parseInt(this.$route.params.id)
+    const id = parseInt(this.$route.params.id);
 
-    this.group_id = id
+    this.group_id = id;
 
-    console.log(id)
+    console.log(id);
 
-    const response = await axios.get(`http://localhost:3000/api/groups/groupDetails/${id}`)
-    
-    this.groupDetails = response.data.group[0]
+    const response = await axios.get(
+      `http://localhost:3000/api/groups/groupMembersAndDetails/${id}`
+    );
 
+    this.groupDetails = response.data.groupDetails[0];
+
+    this.loggedUserData = response.data.groupDetails.find((item) => {
+      return item.user_id == this.userDetails.id;
+    });
     // Listen for window resize event
     window.addEventListener("resize", this.handleWindowResize);
   },
@@ -184,6 +220,33 @@ export default {
     window.removeEventListener("resize", this.handleWindowResize);
   },
   methods: {
+    async exitGroup() {
+      await axios
+        .post(`http://localhost:3000/api/groups/removeMemberGroup`, {
+          user_id: this.userDetails.id,
+          group_id: this.group_id,
+        })
+        .then((response) => {
+          console.log(response);
+          this.$router.push("/group-list");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async deleteGroup() {
+      await axios
+        .delete(`http://localhost:3000/api/groups/delete/${this.group_id}`)
+        .then((response) => {
+          console.log(response);
+          this.successToast("Group Deleted Successfully !");
+
+          this.$router.push("/group-list");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
         this.messages.push({ text: this.newMessage, sender: "me" });
@@ -194,12 +257,12 @@ export default {
             sender: "Other User",
           });
         }, 1000);
-        console.log(this.newMessage)
+        console.log(this.newMessage);
         await axios.post(`http://localhost:3000/api/groups/addMessageGroup`, {
-          "group_id":this.group_id,
-          "sender_id":1,
-          "message":this.newMessage
-        })
+          group_id: this.group_id,
+          sender_id: 1,
+          message: this.newMessage,
+        });
         this.newMessage = "";
       }
     },
@@ -228,10 +291,10 @@ export default {
         autoClose: 2000,
       });
     },
-  // openAddExpenseDialog() {
-  //   // Emit an event to open the dialog for adding expenses
-  //   this.$refs.addExpenseForm.dialog = true;
-  // },
+    // openAddExpenseDialog() {
+    //   // Emit an event to open the dialog for adding expenses
+    //   this.$refs.addExpenseForm.dialog = true;
+    // },
   },
 };
 </script>

@@ -46,23 +46,23 @@ export const createUser = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email_username, password } = req.body;
 
-    if (!email?.trim()) {
-      next(new ErrorHandler("Please Provide Email", 400));
+    if (!email_username?.trim()) {
+      next(new ErrorHandler("Please Provide Email Or Username", 400));
     } else if (!password?.trim()) {
       next(new ErrorHandler("Please Provide Password", 400));
     }
     // console.log("type "+typeof(password))
 
-    const result2 = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
+    const result2 = await pool.query("SELECT * FROM users WHERE email = $1 OR username = $1", [
+      email_username,
     ]);
 
     // console.log("result2 " + JSON.stringify(result2));
 
     if (result2.rows.length == 0) {
-      next(new ErrorHandler("Email is Not Registred", 400));
+      next(new ErrorHandler("Email is Not Registered", 400));
     }
 
     if (JSON.stringify(password) != JSON.stringify(result2.rows[0].password)) {

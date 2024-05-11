@@ -8,6 +8,10 @@ import {
   groupMembersDetailDb,
   usersGroupsDb,
   balanceExpenseDb,
+  updateGroupDb,
+  groupMemberAndDetailDb,
+  promoteAdminGroupDb,
+  dismissAdminGroupDb,
 } from "../db/group.db.js";
 
 class GroupService {
@@ -22,6 +26,14 @@ class GroupService {
   static deleteGroup = async (data) => {
     try {
       return await deleteGroupDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static updateGroup = async (data) => {
+    try {
+      return await updateGroupDb(data);
     } catch (error) {
       console.log(error);
       throw new ErrorHandler("Error While Database Operation", 401);
@@ -78,6 +90,31 @@ class GroupService {
   static balanceExpense = async (data) => {
     try {
       return await balanceExpenseDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+
+  static groupMemberAndDetail = async (data) => {
+    try {
+      return await groupMemberAndDetailDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static promoteAdminGroup = async (data) => {
+    try {
+      return await promoteAdminGroupDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static dismissAdminGroup = async (data) => {
+    try {
+      return await dismissAdminGroupDb(data);
     } catch (error) {
       console.log(error);
       throw new ErrorHandler("Error While Database Operation", 401);

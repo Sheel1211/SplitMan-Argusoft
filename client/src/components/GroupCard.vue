@@ -17,7 +17,7 @@
           class="group-details-container"
           :class="{ 'vertical-align': isTextVerticalAlign }"
         >
-          <span class="group-detail">Amount Owed: ₹{{ group.amountOwed }}</span>
+          <span class="group-detail">Amount Owed: ₹{{ group.amount_owed }}</span>
           <span
             class="group-detail-divider"
             :class="{
@@ -27,7 +27,7 @@
             >|</span
           >
           <span class="group-detail"
-            >Amount Owed To You: ₹{{ group.amountOwedToYou }}</span
+            >Amount Owed To You: ₹{{ group.amount_owed_to }}</span
           >
           <span
             class="group-detail-divider"
@@ -38,7 +38,7 @@
             >|</span
           >
           <span class="group-detail"
-            >Total Balance Spent in Group: ₹{{ group.totalBalance }}</span
+            >Total Balance Spent in Group: ₹{{ group.amount_owed_to -  group.amount_owed}}</span
           >
         </div>
       </v-card-title>

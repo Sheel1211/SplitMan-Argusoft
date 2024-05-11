@@ -108,6 +108,48 @@ export const fetchExpense = async (req, res, next) => {
   }
 }
 
+export const viewExpense = async (req, res, next) => {
+    try {
+        const group_id = req.params.group_id;
+        const viewExpense = await ExpenseService.fetchExpense({
+          group_id,
+        });
+
+        const expense_rows = []
+
+        viewExpense.forEach(row => {
+            expense_rows.push(row);
+          });
+          console.log(expense_rows)
+        res.status(201).json({
+          success: true,
+          message: "view expense successfull !",
+          expenseRows: expense_rows,
+        });
+  
+    } catch (error) {
+        next(error);
+    }
+  };
+
+export const prefillExpense = async (req, res, next) => {
+  try {
+      const expense_id = req.params.expense_id; 
+  
+      const prefillExpense = await ExpenseService.prefillExpense({
+          expense_id,
+        });
+        res.status(201).json({
+          success: true,
+          message:" expense prefilled successfully!",
+          Expense: prefillExpense,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+  }
+
 const storage = multer.diskStorage({
     destination: "./upload/ExpenseImage",
     filename: (req, file, cb) => {

@@ -12,7 +12,7 @@
           <form @submit.prevent="login" class="form-elements">            <input
               type="text"
               v-model.trim="email"
-              placeholder="Username"
+              placeholder="Username or Email"
               required
             />
             <input
@@ -70,7 +70,7 @@ export default {
 
   try {
     const response = await axios.post(`http://localhost:3000/api/user/login`, {
-      email: this.email,
+      email_username: this.email,
       password: this.password,
     });
 

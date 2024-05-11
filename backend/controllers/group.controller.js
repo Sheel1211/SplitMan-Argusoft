@@ -16,7 +16,7 @@ export const createGroup = async (req, res, next) => {
       next(new ErrorHandler("Please Provide Group Name", 400));
     } else if (!group_description?.trim()) {
       next(new ErrorHandler("Please Provide Group Description", 400));
-    } else if (participants.length == 1) {
+    } else if (participants.length == 0) {
       next(new ErrorHandler("Kindly Select Group Participants", 400));
     }
 
@@ -51,6 +51,33 @@ export const deleteGroup = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateGroup = async (req, res, next) => {
+  try {
+    const group_id = req.params.group_id;
+    let image = "";
+
+    if (req.file) {
+      console.log("With File");
+      image = `${process.env.URL}/GroupImage/${req.file.filename}`;
+    }
+    else {
+      image = req.body.image;
+    }
+
+    const {group_name,group_description} = req.body;
+    await GroupService.updateGroup({group_id,group_name,group_description,image});
+
+
+
+    res.status(201).json({
+      success: true,
+      message: `Group Updated successfully!`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const addMemberGroup = async (req, res, next) => {
   try {
     const participants = req.body.participants;
@@ -67,10 +94,11 @@ export const addMemberGroup = async (req, res, next) => {
 };
 export const removeMemberGroup = async (req, res, next) => {
   try {
-    const participants = JSON.parse(req.body.participants);
+    
     const group_id = req.body.group_id;
+    const user_id = req.body.user_id;
 
-    await GroupService.removeMemberGroup({ participants, group_id });
+    await GroupService.removeMemberGroup({ user_id, group_id });
     return res.status(201).json({
       success: true,
       message: `Members Removed successfully!`,
@@ -136,88 +164,125 @@ export const usersGroups = async (req, res, next) => {
 
 export const balanceExpense = async (req, res, next) => {
   try {
-      const group_id = req.params.group_id;
- 
-      const balanceExpense = await GroupService.balanceExpense({
-          group_id,
-        });
+    const group_id = req.params.group_id;
 
-        // const toPayDetails = {}
+    const balanceExpense = await GroupService.balanceExpense({
+      group_id,
+    });
 
-        // balanceExpense.map((data)=>{
-        //   if(!toPayDetails[data.debtor_id]){
-        //     toPayDetails[data.debtor_id] ={
-        //       id: data.debtor_id,
-        //       name:data.debtor_name,
-        //       amount:0
-        //     }
-        //   }
+    // const toPayDetails = {}
 
-        //   toPayDetails[data.debtor_id].amount += data.amount
-        // })
+    // balanceExpense.map((data)=>{
+    //   if(!toPayDetails[data.debtor_id]){
+    //     toPayDetails[data.debtor_id] ={
+    //       id: data.debtor_id,
+    //       name:data.debtor_name,
+    //       amount:0
+    //     }
+    //   }
 
-        // const getPayDetails = {}
+    //   toPayDetails[data.debtor_id].amount += data.amount
+    // })
 
-        // balanceExpense.map((data)=>{
-        //   if(!getPayDetails[data.payer_id]){
-        //     getPayDetails[data.payer_id] ={
-        //       id: data.payer_id,
-        //       name:data.payer_name,
-        //       amount:0
-        //     }
-        //   }
+    // const getPayDetails = {}
 
-        //   getPayDetails[data.payer_id].amount += data.amount
-        // })
+    // balanceExpense.map((data)=>{
+    //   if(!getPayDetails[data.payer_id]){
+    //     getPayDetails[data.payer_id] ={
+    //       id: data.payer_id,
+    //       name:data.payer_name,
+    //       amount:0
+    //     }
+    //   }
 
-        const balanceDetails = {};
+    //   getPayDetails[data.payer_id].amount += data.amount
+    // })
 
-        balanceExpense.map((data) => {
-          if (!balanceDetails[data.payer_id]) {
-            balanceDetails[data.payer_id] = {
-              id: data.payer_id,
-              name: data.payer_name,
-              amount_owed: 0,
-              amount_you_owe: 0,
-              balance: 0,
-            };
-          }
-        
-          if (!balanceDetails[data.debtor_id]) {
-            balanceDetails[data.debtor_id] = {
-              id: data.debtor_id,
-              name: data.debtor_name,
-              amount_owed: 0,
-              amount_you_owe: 0,
-              balance: 0,
-            };
-          }
-        
-          if (data.payer_id!== data.debtor_id) {
-            balanceDetails[data.payer_id].amount_owed += data.amount;
-            balanceDetails[data.debtor_id].amount_you_owe += data.amount;
-          }
-        
-          balanceDetails[data.payer_id].balance =
-            balanceDetails[data.payer_id].amount_owed -
-            balanceDetails[data.payer_id].amount_you_owe;
-        
-          balanceDetails[data.debtor_id].balance =
-            balanceDetails[data.debtor_id].amount_owed -
-            balanceDetails[data.debtor_id].amount_you_owe;
-        });
-        
-        const balanceDetailsArray = Object.values(balanceDetails);
-        
+    // const balanceDetails = {};
 
-        res.status(201).json({
-          success: true,
-          message: `Expense Balanced successfully!`,
-          balanceDetails: balanceDetailsArray,
-        });
+    // balanceExpense.map((data) => {
+    //   if (!balanceDetails[data.payer_id]) {
+    //     balanceDetails[data.payer_id] = {
+    //       id: data.payer_id,
+    //       name: data.payer_name,
+    //       amount_owed: 0,
+    //       amount_you_owe: 0,
+    //       balance: 0,
+    //     };
+    //   }
 
+    //   if (!balanceDetails[data.debtor_id]) {
+    //     balanceDetails[data.debtor_id] = {
+    //       id: data.debtor_id,
+    //       name: data.debtor_name,
+    //       amount_owed: 0,
+    //       amount_you_owe: 0,
+    //       balance: 0,
+    //     };
+    //   }
+
+    //   if (data.payer_id !== data.debtor_id) {
+    //     balanceDetails[data.payer_id].amount_owed += data.amount;
+    //     balanceDetails[data.debtor_id].amount_you_owe += data.amount;
+    //   }
+
+    //   balanceDetails[data.payer_id].balance =
+    //     balanceDetails[data.payer_id].amount_owed -
+    //     balanceDetails[data.payer_id].amount_you_owe;
+
+    //   balanceDetails[data.debtor_id].balance =
+    //     balanceDetails[data.debtor_id].amount_owed -
+    //     balanceDetails[data.debtor_id].amount_you_owe;
+    // });
+
+    // const balanceDetailsArray = Object.values(balanceDetails);
+
+    res.status(201).json({
+      success: true,
+      message: `Expense Balanced successfully!`,
+      balanceDetails: balanceExpense,
+    });
   } catch (error) {
-      next(error);
+    next(error);
+  }
+};
+
+export const groupMembersAndDetails = async (req, res, next) => {
+  try {
+    const group_id = req.params.group_id;
+    const groupMemberAndDetail = await GroupService.groupMemberAndDetail(group_id);
+    res.status(201).json({
+      success: true,
+      groupDetails: groupMemberAndDetail,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const dismissAdminGroup = async (req, res, next) => {
+  try {
+    const group_id = req.body.group_id;
+    const user_id = req.body.user_id;
+    const dismissAdminGroup = await GroupService.dismissAdminGroup({user_id,group_id});
+    res.status(201).json({
+      success: true,
+      memberDetails: dismissAdminGroup,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const promoteAdminGroup = async (req, res, next) => {
+  try {
+    const group_id = req.body.group_id;
+    const user_id = req.body.user_id;
+    const promoteAdminGroup = await GroupService.promoteAdminGroup({user_id,group_id});
+    res.status(201).json({
+      success: true,
+      memberDetails: promoteAdminGroup,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 

@@ -1,4 +1,4 @@
-import { createExpenseDb, fetchExpenseDb, updateExpenseDb } from "../db/expense.db.js";
+import { createExpenseDb, fetchExpenseDb, updateExpenseDb,prefillExpenseDb } from "../db/expense.db.js";
 
 
 class ExpenseService {
@@ -23,6 +23,14 @@ class ExpenseService {
     static fetchExpense = async (data) => {
       try {
         return await fetchExpenseDb(data);
+      } catch (error) {
+        console.log(error);
+        throw new ErrorHandler("Error While Database Operation", 401);
+      }
+    };
+    static prefillExpense = async (data) => {
+      try {
+        return await prefillExpenseDb(data);
       } catch (error) {
         console.log(error);
         throw new ErrorHandler("Error While Database Operation", 401);
