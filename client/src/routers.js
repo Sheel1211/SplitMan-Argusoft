@@ -1,7 +1,7 @@
 import Groups from './components/Groups.vue';
 // import SignUp from './components/SignUp.vue';
 import GroupChat from './components/GroupChat.vue';
-import DashBoard from './components/DashBoard.vue';
+import DashBoard from './components/Dashboard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from './components/Login.vue';
 import SignUp from './components/SignUp.vue'
