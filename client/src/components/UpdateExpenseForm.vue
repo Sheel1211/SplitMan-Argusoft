@@ -173,6 +173,7 @@ export default {
   },
   methods: {
     async editExpense() {
+    
       // amount: this.expenseAmount / this.selectedParticipants.length,
       if (this.$refs.form.validate()) {
         if (this.split_type == "Equal") {
@@ -279,11 +280,13 @@ export default {
 
     async prefillExpense() {
       // await this.searchParticipants();
+     
       await axios
         .get(
           `http://localhost:3000/api/expenses/prefillExpenses/${this.expense_id}`
         )
         .then((response) => {
+         
           this.expense = response.data.Expense;
           console.log("expense info ",this.expense);
         })

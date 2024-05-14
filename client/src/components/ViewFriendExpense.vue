@@ -28,6 +28,7 @@
           <!-- <th>Expense Description</th> -->
           <th>Actions</th>
           <th>Settlement</th>
+          <th>Download</th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +38,7 @@
           <td>{{ expense.total_amount }}</td>
           <td>{{ expense.split_type }}</td>
           <td>{{ expense.deb_amount }}</td>
+         
           <!-- <td>{{ expense.expense_description }}</td> -->
           <td>
             <!-- <v-icon @click="editExpense(expense)">mdi-pencil</v-icon>
@@ -47,6 +49,12 @@
           </td>
           <td> <v-btn v-if="!expense.is_settled" v-bind="activatorProps" variant="outlined" @click="settleOneExpense(participants_id)" >Settle</v-btn>
                     <v-btn v-else v-bind="activatorProps" variant="outlined" @click="settleOneExpense(participants_id)" disabled>Settled</v-btn></td>
+                    <td>
+                      <!-- <v-icon >mdi-download</v-icon> -->
+                      <ReportDownload
+                      :expenses="expenses"
+                      :expense_id="expense.e_id"/>
+                    </td>
          
             <!-- <v-btn v-bind="activatorProps" variant="outlined" class="add-expense-btn">
         Settle
@@ -74,9 +82,12 @@
   <script>
   import axios from "axios";
   import UpdateExpenseForm from './UpdateExpenseForm.vue';
+  import ReportDownload from './ReportDownload.vue'
+
 //   import SettleGroupExpense from "./SettleGroupExpense.vue";
   export default {
     components: {UpdateExpenseForm,
+      ReportDownload
         // SettleGroupExpense,
     },
     name: "ViewExpense",
@@ -91,6 +102,7 @@
     methods: {
       async viewExpense() {
         console.log("Conversation ID:", this.conversation_id);
+        
         await axios
           .get(`http://localhost:3000/api/expenses/fetchExpenseFrdConversation/${this.conversation_id}`)
           .then((response) => {
