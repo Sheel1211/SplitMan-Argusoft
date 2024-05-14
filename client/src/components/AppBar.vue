@@ -60,7 +60,7 @@
         </v-btn>
       </template>
       <v-list>
-        <v-list-item @click="handleProfileClick">
+        <v-list-item link to="/profile">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>

@@ -140,6 +140,88 @@ export const getUserNameFromRegex = async (req, res, next) => {
   }
 };
 
+export const updateInformation = async (req, res, next) => {
+  try {
+      const user_id = req.params.user_id
+      const { name, username, email} = req.body;
+
+      if (!name?.trim()) {
+          next(new ErrorHandler("Please provide name", 400));
+      } else if (!username?.trim()) {
+          next(new ErrorHandler("Please provide username", 400));
+      } else if (!email?.trim()) {
+          next(new ErrorHandler("Please provide email", 400));
+      }
+      // checking if username exists in db
+      const checkUsername = await UserService.checkUsername({
+        username, user_id
+      });
+
+      if (checkUsername){
+        next(new ErrorHandler("Username Already exists"))
+      } else{
+
+      const updateInformation = await UserService.updateInformation({
+          name,
+          username,
+          email,
+          user_id
+        });
+        res.status(201).json({
+          success: true,
+          message: `Information Updated successfully!`,
+          updateInformation: updateInformation,
+        });
+      }
+
+  } catch (error) {
+      next(error);
+  }
+};
+
+export const updatePassword = async (req, res, next) => {
+  try {
+      const user_id = req.params.user_id
+      const { newPassword} = req.body;
+
+      const updatePassword = await UserService.updatePassword({
+          newPassword, user_id
+        });
+        res.status(201).json({
+          success: true,
+          message: `Password Updated successfully!`,
+          updatePassword: updatePassword,
+        });
+
+  } catch (error) {
+      next(error);
+  }
+};
+
+export const updateImage = async (req, res, next) => {
+  try {
+    const user_id = req.params.user_id;
+    let image = "";
+
+    if (req.file) {
+      // console.log("With File");
+      image = `${process.env.URL}/UserImage/${req.file.filename}`;
+    }
+    else {
+      image = req.body.ProfileImage;
+    }
+
+    await UserService.updateImage({image, user_id});
+
+    res.status(201).json({
+      success: true,
+      message: `Image Updated successfully!`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const storage = multer.diskStorage({
   destination: "./upload/UserImage",
   filename: (req, file, cb) => {
