@@ -46,37 +46,42 @@ const formattedDate = `${dateObj.getDate()} ${dateObj.toLocaleString('default', 
 
       // Create a new div element to hold the table content
       const div = document.createElement("div");
+      div.className = "report-content"; // Add this line
+
+
       div.innerHTML = `
-        <table>
-          
-          
-            <tbody>
-              <tr>
-        <th style="padding-right: 20px;">Expense Name</th>
-        <td>${filteredExpense.expense_name}</td>
+      <div style="font-family: Arial, sans-serif; max-width: 100%; padding-top: 20px;">
+  <h1 style="text-align: center; color: #3366cc;">Report for Expense</h1>
+  <table style="width: 100%; border-collapse: collapse;">
+    <tbody>
+      <tr>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Expense Name</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${filteredExpense.expense_name}</td>
       </tr>
       <tr>
-        <th style="padding-right: 20px;">Total Amount</th>
-        <td>${filteredExpense.total_amount}</td>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Total Amount</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${filteredExpense.total_amount}</td>
       </tr>
       <tr>
-        <th style="padding-right: 20px;">Split Type</th>
-        <td>${filteredExpense.split_type}</td>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Split Type</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${filteredExpense.split_type}</td>
       </tr>
       <tr>
-        <th style="padding-right: 20px;">Debt Amount</th>
-        <td>${filteredExpense.deb_amount}</td>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Debt Amount</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${filteredExpense.deb_amount}</td>
       </tr>
       <tr>
-        <th style="padding-right: 20px;">Time Created</th>
-        <td> ${timeCreated.toLocaleTimeString()}</td>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Time Created</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${timeCreated.toLocaleTimeString()}</td>
       </tr>
       <tr>
-        <th style="padding-right: 20px;">Date Created</th>
-        <td>${formattedDate}</td>
+        <th style="padding: 10px; border: 1px solid #dddddd; text-align: left; background-color: #f2f2f2;">Date Created</th>
+        <td style="padding: 10px; border: 1px solid #dddddd; text-align: left;">${formattedDate}</td>
       </tr>
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+</div>
+
       `;
 
       console.log("div ", div);
@@ -92,4 +97,32 @@ const formattedDate = `${dateObj.getDate()} ${dateObj.toLocaleString('default', 
 
 <style scoped>
 /* Styles if any */
+.report-content {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+}
+
+.report-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-content th,
+.report-content td {
+  padding: 10px;
+  border: 1px solid #dddddd;
+  text-align: left;
+}
+
+.report-content th {
+  background-color: #f2f2f2;
+}
+
+.report-content tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.report-content tr:hover {
+  background-color: #f2f2f2;
+}
 </style>

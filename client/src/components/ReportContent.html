@@ -1,0 +1,47 @@
+<template>
+    <div class="report-content">
+      <table class="report-table">
+        <tbody>
+          <tr>
+            <th style="padding-right: 20px;">Expense Name</th>
+            <td>{{ filteredExpense.expense_name }}</td>
+          </tr>
+          <tr>
+            <th style="padding-right: 20px;">Total Amount</th>
+            <td>{{ filteredExpense.total_amount }}</td>
+          </tr>
+          <!-- Add other rows as needed -->
+        </tbody>
+      </table>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    props: {
+      filteredExpense: {
+        type: Object,
+        required: true
+      }
+    }
+  };
+  </script>
+  
+  <style scoped>
+  .report-content {
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .report-table th, .report-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  </style>
+  
