@@ -12,6 +12,7 @@ import friendRouter from "./routes/friend.route.js";
 import groupRouter from "./routes/group.route.js";
 import expenseRouter from "./routes/expense.route.js";
 import chatRouter from "./routes/chat.route.js";
+import reportRouter from "./routes/report.route.js";
 
 env.config();
 
@@ -28,6 +29,7 @@ app.use("/api/friends", friendRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/messages", chatRouter);
+app.use("/api/reports", reportRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
