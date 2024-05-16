@@ -28,7 +28,7 @@
           <!-- <th>Expense Description</th> -->
           <th>Actions</th>
           <th>Settlement</th>
-          <th>Download</th>
+          
         </tr>
       </thead>
       <tbody>
@@ -49,12 +49,7 @@
           </td>
           <td> <v-btn v-if="!expense.is_settled" v-bind="activatorProps" variant="outlined" @click="settleOneExpense(participants_id)" >Settle</v-btn>
                     <v-btn v-else v-bind="activatorProps" variant="outlined" @click="settleOneExpense(participants_id)" disabled>Settled</v-btn></td>
-                    <td>
-                      <!-- <v-icon >mdi-download</v-icon> -->
-                      <ReportDownload
-                      :expenses="expenses"
-                      :expense_id="expense.e_id"/>
-                    </td>
+                   
          
             <!-- <v-btn v-bind="activatorProps" variant="outlined" class="add-expense-btn">
         Settle
@@ -73,8 +68,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          
+          <ReportDownload :expenses="expenses" />
           <v-btn color="red darken-1" text @click="dialog = false">Close</v-btn>
+  
         </v-card-actions>
+        
       </v-card>
     </v-dialog>
   </template>

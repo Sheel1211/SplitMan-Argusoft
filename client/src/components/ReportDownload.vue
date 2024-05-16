@@ -21,42 +21,60 @@
         </div>
 
         <h1>Report for Expense</h1>
-        <table>
-          <tbody>
-            <tr>
-              <th>Expense Name</th>
-              <td>{{ filteredExpense.expense_name }}</td>
-            </tr>
-            <tr>
-              <th>Total Amount</th>
-              <td>{{ filteredExpense.total_amount }}</td>
-            </tr>
-            <tr>
-              <th>Split Type</th>
-              <td>{{ filteredExpense.split_type }}</td>
-            </tr>
-            <tr>
-              <th>Debt Amount</th>
-              <td>{{ filteredExpense.deb_amount }}</td>
-            </tr>
-            <tr>
-              <th>Time Created</th>
-              <td>{{ formattedTimeCreated }}</td>
-            </tr>
-            <tr>
-              <th>Date Created</th>
-              <td>{{ formattedDate }}</td>
-            </tr>
-            <tr>
-              <th>Settled</th>
-              <td>{{ filteredExpense.is_settled ? "Yes" : "No" }}</td>
-            </tr>
-            <tr>
-              <th>Bill Receipt</th>
-              <td><img src="../assets/bill.jpg" class="bill"/></td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-for="expense in expenses" :key="expense.e_id">
+           <!-- Insert page break before each expense except the first one -->
+          
+          <table>
+            <tbody>
+              <!-- Row for Expense ID -->
+              <tr>
+                <th>Expense ID</th>
+                <td>{{ expense.e_id }}</td>
+              </tr>
+              <!-- Row for Expense Name -->
+              <tr>
+                <th>Expense Name</th>
+                <td>{{ expense.expense_name }}</td>
+              </tr>
+              <!-- Row for Total Amount -->
+              <tr>
+                <th>Total Amount</th>
+                <td>{{ expense.total_amount }}</td>
+              </tr>
+              <!-- Row for Split Type -->
+              <tr>
+                <th>Split Type</th>
+                <td>{{ expense.split_type }}</td>
+              </tr>
+              <!-- Row for Debt Amount -->
+              <tr>
+                <th>Debt Amount</th>
+                <td>{{ expense.deb_amount }}</td>
+              </tr>
+              <!-- Row for Time Created -->
+              <!-- <tr>
+                <th>Time Created</th>
+                <td>{{ formattedTimeCreated(expense.time_created) }}</td>
+              </tr> -->
+              <!-- Row for Date Created -->
+              <!-- <tr>
+                <th>Date Created</th>
+                <td>{{ formattedDate(expense.time_created) }}</td>
+              </tr> -->
+              <!-- Row for Settled -->
+              <tr>
+                <th>Settled</th>
+                <td>{{ expense.is_settled ? "Yes" : "No" }}</td>
+              </tr>
+              <!-- Row for Bill Receipt -->
+              <tr>
+                <th>Bill Receipt</th>
+                <td><img src="../assets/bill.jpg" class="bill" /></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="html2pdf__page-break"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -87,19 +105,19 @@ export default {
     },
   },
   computed: {
-    filteredExpense() {
-      return (
-        this.expenses.find((expense) => expense.e_id === this.expense_id) || {}
-      );
-    },
+    // filteredExpense() {
+    //   return (
+    //     this.expenses.find((expense) => expense.e_id === this.expense_id) || {}
+    //   );
+    // },
     formattedDate() {
-      const dateObj = new Date(this.filteredExpense.time_created);
+      const dateObj = new Date(this.expenses.time_created);
       return `${dateObj.getDate()} ${dateObj.toLocaleString("default", {
         month: "short",
       })} ${dateObj.getFullYear()}`;
     },
-    formattedTimeCreated() {
-      const dateObj = new Date(this.filteredExpense.time_created);
+    formattedTimeCreated(timeCreated) {
+      const dateObj = new Date(timeCreated);
       return dateObj.toLocaleTimeString();
     },
   },
