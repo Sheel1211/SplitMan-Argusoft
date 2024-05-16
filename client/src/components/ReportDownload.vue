@@ -125,13 +125,14 @@ h1 {
   text-align: center;
   color: rgb(155 105 212);
   padding: 20px;
-  margin: 0px;
+  margin: -43px;
 }
 
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 15px; /* Adjust this value to control the space between cells */
+  margin-top:51px;
 }
 
 th,
