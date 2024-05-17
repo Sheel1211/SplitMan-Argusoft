@@ -20,16 +20,16 @@
           </svg>
         </div>
 
-        <h1>Report for Expense</h1>
-        <div v-for="expense in expenses" :key="expense.e_id">
+        <h1 class="heading">Report for Expense</h1>
+        <div v-for="(expense,index) in expenses" :key="expense.e_id">
            <!-- Insert page break before each expense except the first one -->
-          
+           
           <table>
             <tbody>
-              <!-- Row for Expense ID -->
+              <!-- Row for Expense Number -->
               <tr>
-                <th>Expense ID</th>
-                <td>{{ expense.e_id }}</td>
+                <th>Expense Number</th>
+                <td>{{ index + 1 }}</td>
               </tr>
               <!-- Row for Expense Name -->
               <tr>
@@ -52,10 +52,11 @@
                 <td>{{ expense.deb_amount }}</td>
               </tr>
               <!-- Row for Time Created -->
-              <!-- <tr>
-                <th>Time Created</th>
-                <td>{{ formattedTimeCreated(expense.time_created) }}</td>
-              </tr> -->
+              <tr>
+                <th>Date and Time Created</th>
+                <td>{{ new Date(expense.time_created).toLocaleDateString('en-GB') }} {{ new Date(expense.time_created).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) }}</td>
+                <!-- <td>{{ expense.time_created }}</td> -->
+              </tr>
               <!-- Row for Date Created -->
               <!-- <tr>
                 <th>Date Created</th>
@@ -87,10 +88,7 @@ import html2pdf from "html2pdf.js";
 export default {
   name: "ReportDownload",
   props: {
-    expense_id: {
-      type: String, // Assuming expense_id is of type String
-      required: true,
-    },
+   
     expenses: {
       type: Array,
       required: true,
@@ -104,23 +102,7 @@ export default {
       html2pdf().from(element).save("expenses_report.pdf");
     },
   },
-  computed: {
-    // filteredExpense() {
-    //   return (
-    //     this.expenses.find((expense) => expense.e_id === this.expense_id) || {}
-    //   );
-    // },
-    formattedDate() {
-      const dateObj = new Date(this.expenses.time_created);
-      return `${dateObj.getDate()} ${dateObj.toLocaleString("default", {
-        month: "short",
-      })} ${dateObj.getFullYear()}`;
-    },
-    formattedTimeCreated(timeCreated) {
-      const dateObj = new Date(timeCreated);
-      return dateObj.toLocaleTimeString();
-    },
-  },
+  
 };
 </script>
 
@@ -139,7 +121,7 @@ export default {
   padding-top: 20px;
 }
 
-h1 {
+.heading {
   text-align: center;
   color: rgb(155 105 212);
   padding: 20px;
