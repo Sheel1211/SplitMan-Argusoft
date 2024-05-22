@@ -9,9 +9,6 @@
       }}</span>
 
         </div>
-        <v-btn>
-          
-        </v-btn>
         <div class="moreOptions">
           <!-- <img loading="lazy" alt="" src="/Friends/bithreedotsvertical.svg" /> -->
           <v-menu transition="scale-transition">
@@ -20,9 +17,14 @@
             </template>
             
             <v-list>
+                <v-list-item>
+              <AddFriendsExpense
+                :conversation_id="selectedChat.c_id"
+                :payer_friend_id="selectedChat.member1_id"
+              ></AddFriendsExpense>
+            </v-list-item>
               
               <v-list-item>
-                  <add-friends-expense ref="addExpenseDialog"></add-friends-expense>
                   <ViewFriendExpense :conversation_id="selectedChat.c_id" />
               </v-list-item>
 
